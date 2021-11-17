@@ -1,0 +1,9 @@
+{% extends "../base.html" %}
+
+{% block title %}
+Logout successful
+{% endblock title %}
+
+{% block content %}
+Success! Now you can sign in again <a href="{% url 'user_data:login' %}">here</a>
+{% endblock content %}

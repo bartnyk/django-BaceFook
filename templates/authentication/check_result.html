@@ -1,0 +1,14 @@
+{% extends "../base.html" %}
+
+{% block title %}
+    {{ result }}
+{% endblock title %}    
+
+{% block content %}
+    <p>
+        {% if result == "Success!" %}
+            Your account has been verified correctly!
+        {% else %}
+            Something goes wrong. You have been logged out.
+        {% endif %}
+{% endblock content %}

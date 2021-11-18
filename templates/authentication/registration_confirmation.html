@@ -1,0 +1,20 @@
+{% extends "../base.html" %}
+
+{% block title %}
+Registration success!
+{% endblock title %}
+
+{% block content %}
+
+    {% if purpose == "first" %}
+        <p>Almost done! Check your mailbox on {{ mail }} and confirm created account.</p>
+    {% elif purpose == "resend" %}
+        <p>We sent you confirmation message ({{ mail }}), but we didn't received your reply.
+        <p>Check your mailbox and confirm registration.</p>
+        <p>If did not get our message, click <a href="{% url 'user_data:confirm' %}">HERE.</a></p>
+    {% else %}
+        {% url 'user_interface:timeline' %}
+    {% endif %}
+
+
+{% endblock content %}

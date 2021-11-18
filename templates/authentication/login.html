@@ -5,6 +5,9 @@ Login
 {% endblock title %}
 
 {% block content %}
+    {% if purpose == "first_login" %}
+        <p>Account has been created. You can sign in now.</p>
+    {% endif %}
     <form method="POST">
         {{ form.as_p }}
         {% csrf_token %}

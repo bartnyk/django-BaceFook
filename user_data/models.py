@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+from django.core.mail import send_mail
+import uuid
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -10,11 +12,12 @@ class Profile(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     about = models.TextField(blank=True, null=True)
     account_confirmed = models.BooleanField(default=False)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_profile(sender, instance=None, created=False, **kwargs):
-    if created:
+    if created: 
         Profile.objects.create(user=instance)

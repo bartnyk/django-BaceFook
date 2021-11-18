@@ -1,5 +1,4 @@
 from django import forms
-from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
@@ -32,10 +31,10 @@ class RegisterForm(forms.Form):
         pwd = cd.get('password')
         pwd2 = cd.get('password2')
         
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username=username).exists(): #username existence
             raise ValidationError('Username already exists!')
 
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email=email).exists(): # email existence
             raise ValidationError("Email address already exists!")
 
         if pwd != pwd2: #password confirmation

@@ -1,0 +1,5 @@
+{
+    "confirmation": ["Confirm your registration", "Hello\nConfirm your accout by clicking link below:\n"],
+    "reset-password": ["Password reset", "Hello\nWe noticed that you want to reset your password.\nTo do this, click link bellow:\n"],
+    "change-email": ["Email address change", "Hello\nTo confirm changing email, click link bellow:\n"]
+}

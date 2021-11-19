@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 
+from user_data.models import Profile
+
 class LoginForm(forms.Form):
     username_or_mail = forms.CharField(label='Login or e-mail', max_length=150)
     password = forms.CharField(label='Password', widget=forms.PasswordInput)

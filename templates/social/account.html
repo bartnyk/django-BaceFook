@@ -5,5 +5,15 @@
 {% endblock title %}
 
 {% block content %}
-    Nothing to see here yet
+    <div style="inline-block">
+        <div >
+            <img src='{{ profile.profile_picture.url }}' width="150" style="float: left; margin-right:50px">
+
+            <p>{{ profile.user.first_name}} {{ profile.user.last_name }}</p>
+            <p>Date of birth: {{ profile.date_of_birth }}</p>
+            <p>About: {{ profile.about }}</p>
+
+            <p style="clear: both;"><a href="{% url 'user_data:account_settings' %}">Make some changes</a></p>
+        </div>
+    </div>
 {% endblock content %}

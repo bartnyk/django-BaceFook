@@ -1,13 +1,9 @@
-from django.core import mail
-from django.http.request import validate_host
-from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
-from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.urls import reverse, resolve
+from django.urls import reverse
 from .models import Profile
 from django.core.mail import send_mail
 from json import load
@@ -25,7 +21,6 @@ def login_view(request):
             user = authenticate(username=cd['username_or_mail'], password=cd['password'])
             print(user)
             if user is not None:
-                print('hehe')
                 login(request, user)
                 if user.last_login is None:
                     return redirect(reverse('user_data:confirm'))
@@ -52,8 +47,7 @@ def registration_view(request):
                 last_name = cd['last_name'],
                 email=cd['email'],
                 password=cd['password'],
-                active=True
-            )
+                )
             return redirect(reverse("user_data:login"), {"purpose": "first_login"})
     else:
         form = RegisterForm()
@@ -63,7 +57,8 @@ def registration_view(request):
 def account_details(request):
     if not Profile.objects.get(user=request.user).account_confirmed:
         return render(request, 'authentication/registration_confirmation.html', {'mail': request.user.email, 'purpose': 'resend'})
-    return render(request, 'social/account.html')
+    profile = Profile.objects.get(user=request.user)
+    return render(request, 'social/account.html', {"profile": profile})
 
 @login_required(login_url='user_data:login')
 def send_confirmation(request): 
@@ -98,6 +93,19 @@ def check_confirmation(request, uuid):
         logout(request)
     return render(request, 'authentication/check_result.html', context)
     
-    
-
-
+@login_required(login_url='user_data:login')
+def account_settings(request):
+    profile = Profile.objects.get(user=request.user)
+    # form = AdditionalInfoForm(initial={
+    #     'first_name': profile.user.first_name,
+    #     'last_name': profile.user.last_name,
+    #     'about': profile.about,
+    #     'date_of_birth': profile.date_of_birth,
+    # })
+    form = AdditionalInfoForm()
+    if request.method == "POST":
+        print(form.is_valid())
+        if form.is_valid():
+            cd = form.cleaned_data
+            print('haha')
+    return render(request, 'social/settings.html', {"form": form, "profile": profile})

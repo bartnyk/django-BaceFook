@@ -2,15 +2,15 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-Registration
+    Account settings 
 {% endblock title %}
 
 {% block content %}
-
+    <p>Make some changes as you wish</p>
     <form method="POST">
-    {{ form|crispy }}
     {% csrf_token %}
-    <input type="submit" value="confirm">
+    {{ form|crispy }}
+    <input type="submit" value="change">
     </form>
 
-{% endblock content %}
+{% endblock content %}  

@@ -34,4 +34,4 @@ class Friends(models.Model):
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def set_friends_modes(sender, instance=None, created=False, **kwargs):
     if created:
-        Friends.objects.create(user=instance, friends=instance)
+        Friends.objects.create(user=instance)

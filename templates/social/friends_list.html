@@ -1,0 +1,16 @@
+{% extends "../base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Friends list
+{% endblock title %}
+
+{% block content %}
+<h1>Friends list</h1>
+{% for friend in friends_list %}
+    <li><img src="{{ friend.profile.profile_picture.url }}" width="80"> {{ friend.profile }}</li>
+
+{% empty %}
+    <li>No friends yet.</li>
+{% endfor %}
+{% endblock content %}

@@ -1,4 +1,8 @@
 *.sqlite3
 */__pycache__
-*/migrations/0*
+*/migrations/*
 *.pyc
+media/images/*
+!media/images/default.png
+!*/__init__.py
+.idea

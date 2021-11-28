@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+from django.conf import settings
 
 from user_data.models import Profile
 
@@ -33,7 +34,7 @@ class RegisterForm(forms.Form):
         pwd = cd.get('password')
         pwd2 = cd.get('password2')
         
-        if User.objects.filter(username=username).exists(): #username existence
+        if User.objects.filter(username=username).exists(): #username existance
             raise ValidationError('Username already exists!')
 
         if User.objects.filter(email=email).exists(): # email existence
@@ -44,13 +45,15 @@ class RegisterForm(forms.Form):
         
         return cd
         
+class DateInput(forms.DateInput):
+    input_type = 'date'
 
 class AdditionalInfoForm(forms.Form):
     first_name = forms.CharField(label='First name', max_length=20)
     last_name = forms.CharField(label='Last name', max_length=40)
-    date_of_birth = forms.DateField(label="Date of birth", required=False)
+    date_of_birth = forms.DateTimeField(label="Date of birth", required=False, widget=DateInput)
     about = forms.CharField(label='Tell us about yourself', widget=forms.Textarea(), required=False)
-    profile_pic = forms.ImageField(required=False)
+    profile_pic = forms.ImageField(label="Profile picture", required=False)
 
 class ChangeUsernameOrMailForm(forms.Form):
     username = forms.CharField(label='Your new login', max_length=150, required=False)
@@ -63,7 +66,7 @@ class PasswordResetForm(forms.Form):
 class PasswordChange(forms.Form):
     old_password = forms.CharField(label='Old password', widget=forms.PasswordInput)
     new_password = forms.CharField(label='New password', widget=forms.PasswordInput, validators=[validate_password])
-    new_password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label='Confirm new password', widget=forms.PasswordInput)
 
     def clean_new_password(self):
         pwd = self.cleaned_data['new_password']

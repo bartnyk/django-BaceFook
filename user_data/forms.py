@@ -2,8 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
-
-from user_data.models import Profile
+from .models import MALES
 
 class LoginForm(forms.Form):
     username_or_mail = forms.CharField(label='Login or e-mail', max_length=150)
@@ -22,6 +21,7 @@ class RegisterForm(forms.Form):
     username = forms.CharField(label='Login', max_length=150)
     first_name = forms.CharField(label='First name', max_length=20)
     last_name = forms.CharField(label='Last name', max_length=40)
+    male = forms.ChoiceField(label="Male", choices=MALES, required=False)
     email = forms.EmailField(label='E-mail address', max_length=150)
     password = forms.CharField(label='Password', widget=forms.PasswordInput, validators=[validate_password])
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
@@ -48,6 +48,7 @@ class RegisterForm(forms.Form):
 class AdditionalInfoForm(forms.Form):
     first_name = forms.CharField(label='First name', max_length=20)
     last_name = forms.CharField(label='Last name', max_length=40)
+    male = forms.ChoiceField(label="Male", choices=MALES, required=False)
     date_of_birth = forms.DateField(label="Date of birth", required=False)
     about = forms.CharField(label='Tell us about yourself', widget=forms.Textarea(), required=False)
     profile_pic = forms.ImageField(required=False)

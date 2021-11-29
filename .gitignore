@@ -2,3 +2,6 @@
 */__pycache__
 */migrations/0*
 *.pyc
+media/images/*
+!media/images/default.png
+!*/__init__.py

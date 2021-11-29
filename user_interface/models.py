@@ -28,3 +28,4 @@ class Friends(models.Model):
 
     def __str__(self):
         return f"Friends of {self.user.first_name} {self.user.last_name}"
+

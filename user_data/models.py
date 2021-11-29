@@ -14,9 +14,10 @@ MALES = (
     
 )
 
+
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    profile_picture = models.ImageField(upload_to='images', default='images/default.png')
+    profile_picture = models.ImageField(upload_to='images/', default='images/default.png')
     date_of_birth = models.DateField(blank=True, null=True)
     male = models.CharField(max_length=30, choices=MALES, default='None')
     about = models.TextField(blank=True, null=True)

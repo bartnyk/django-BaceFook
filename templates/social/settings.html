@@ -7,10 +7,11 @@
 
 {% block content %}
     <p>Make some changes as you wish</p>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form|crispy }}
-    <input type="submit" value="change">
+    <input type="submit" value="Apply">
+        <a href="{% url 'user_data:change_password' %}">Change password</a>
     </form>
 
 {% endblock content %}  

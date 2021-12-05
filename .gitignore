@@ -1,16 +1,9 @@
 *.sqlite3
 */__pycache__
-<<<<<<< HEAD
-*/migrations/0*
-*.pyc
-media/images/*
-!media/images/default.png
-!*/__init__.py
-=======
 */migrations/*
 *.pyc
 media/images/*
 !media/images/default.png
 !*/__init__.py
 .idea
->>>>>>> f1e18de3a39ee9d74061a2cb9f3157e8deeff3c0
+/media/posts/*

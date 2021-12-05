@@ -1,11 +1,48 @@
 {% extends "../base.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 Timeline
 {% endblock title %}
 
+{% block additional_nav_item %}
+<form class="form-inline my-2 my-lg-0" method="GET" action="{% url 'user_interface:search' %}">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search">
+      <input class='btn btn-outline-success my-2 my-sm-0' type="submit" value="Search">
+</form>
+{% endblock additional_nav_item %}
+
 {% block content %}
-<p><a href="{% url 'user_data:logout' %}">log out</a></p>
-<p><a href="{% url 'user_data:details' %}">Manage account</a></p>
-<p><a href="{% url 'user_interface:friends' %}">Friends</a></p>
+      <div class="left-timeline col-5">
+            <form method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  {{ form|crispy }}
+                  <input type="submit" value="Share">
+            </form>
+      </div>
+
+      <div class="right-timeline col-7">
+            {% for posts in posts_obj %}
+                  
+                  {% for post in posts %}
+                  <div class="post" {% if post.owner == request.user %}style='background-color: rgb(125, 212, 247);'{% endif %}>
+
+                        {{ post.owner.first_name }} {{ post.owner.last_name }} 
+                        <span style="float: right;">{{ post.date|date:'H:i' }}</span>
+                    
+                        <p>
+                            <span style="float: right;">{{ post.date|date:'d/m/Y' }}</span>
+                        </p>  
+                               
+                    <br>
+                    <p>{{ post.body }}</p>
+                    {% if post.image.name != '' %}
+                    <p><img src="{{ post.image.url }}" style="max-width: 100%;"><p>                    
+                    {% endif %}
+                    
+                  </div> 
+                  {% endfor %}
+                
+            {% endfor %}
+      </div>
 {% endblock content %}

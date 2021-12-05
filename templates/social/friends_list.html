@@ -2,15 +2,56 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-    Friends list
+    {% if request.path == '/search/' %}
+        Search results
+    {% else %}
+        Friends list
+    {% endif %}
 {% endblock title %}
 
-{% block content %}
-<h1>Friends list</h1>
-{% for friend in friends_list %}
-    <li><img src="{{ friend.profile.profile_picture.url }}" width="80"> {{ friend.profile }}</li>
 
-{% empty %}
-    <li>No friends yet.</li>
-{% endfor %}
+{% block additional_nav_item %}
+    {% if request.path == '/search/' %}
+        <form class="form-inline my-2 my-lg-0" method="GET" action="{% url 'user_interface:search' %}">
+            <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search">
+            <input class='btn btn-outline-success my-2 my-sm-0' type="submit" value="Search">
+        </form>
+    {% endif %}
+{% endblock additional_nav_item %}
+
+    
+
+{% block content %}
+    {% if request.path == '/search/' %}
+        <h1 style=" margin-right:2rem;">Results for "{{ request.GET.q }}"</h1>
+        {% for obj in list %}
+            <ul>
+                <img src="{{ obj.profile.profile_picture.url }}" width=80 heigth=120>
+                <span style="font-size: 1.5rem; padding-left: 2rem;"><a href='{% url "user_data:other_acc_details" obj.profile.slug %}'>{{ obj.profile }}</a></span>
+            </ul>
+        {% empty %}
+            Sorry, we did not found any matching results.
+        {% endfor %}
+    {% else %}
+        <h1 style="float:left; margin-right:2rem;">Friends list</h1>
+        <form class="form-inline my-2 my-lg-0" style="">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+        <br style="clear:both;">
+        {% for obj in list %}
+            <ul>
+                <img src="{{ obj.profile.profile_picture.url }}" width=80 heigth=120>
+                <a style="font-size: 1.5rem; margin-right: 5rem;" href='{% url "user_data:other_acc_details" obj.profile.slug %}'>{{ obj.profile }}</a>
+                <form method="POST" style="display: inline-block">
+                    {% csrf_token %}
+                    <input type='hidden' name='usr' value="{{ obj }}">
+                    <input type='submit' class='btn btn-outline-success' name='btn' value="Delete friend">
+                    <input type='submit' class='btn btn-outline-success' name='btn' value="Message">
+                </form> 
+            </ul>
+        {% empty %}
+            No friends yet.
+        {% endfor %}
+    {% endif %}
 {% endblock content %}

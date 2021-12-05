@@ -13,7 +13,8 @@ urlpatterns = [
     path('confirm/', send_confirmation, name='confirm'),
     path('confirm/<uuid:uuid>/', check_confirmation, name='check'),
     path('settings/', account_settings, name="account_settings"),
-    path('change_password/', change_password, name="change_password")
+    path('change_password/', change_password, name="change_password"),
+    path('details/<str:slug>/', account_details, name='other_acc_details'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

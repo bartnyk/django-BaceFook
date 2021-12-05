@@ -9,6 +9,7 @@ app_name = "user_interface"
 urlpatterns = [
     path("", timeline, name='timeline'),
     path("friends/", login_required(FriendsList.as_view()), name="friends"),
+    path("search/", login_required(FriendsList.as_view()), name="search"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

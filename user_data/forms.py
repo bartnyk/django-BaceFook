@@ -2,13 +2,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
-<<<<<<< HEAD
 from .models import MALES
-=======
-from django.conf import settings
 
-from user_data.models import Profile
->>>>>>> f1e18de3a39ee9d74061a2cb9f3157e8deeff3c0
 
 class LoginForm(forms.Form):
     username_or_mail = forms.CharField(label='Login or e-mail', max_length=150)
@@ -56,12 +51,8 @@ class DateInput(forms.DateInput):
 class AdditionalInfoForm(forms.Form):
     first_name = forms.CharField(label='First name', max_length=20)
     last_name = forms.CharField(label='Last name', max_length=40)
-<<<<<<< HEAD
     male = forms.ChoiceField(label="Male", choices=MALES, required=False)
-    date_of_birth = forms.DateField(label="Date of birth", required=False)
-=======
     date_of_birth = forms.DateTimeField(label="Date of birth", required=False, widget=DateInput)
->>>>>>> f1e18de3a39ee9d74061a2cb9f3157e8deeff3c0
     about = forms.CharField(label='Tell us about yourself', widget=forms.Textarea(), required=False)
     profile_pic = forms.ImageField(label="Profile picture", required=False)
 

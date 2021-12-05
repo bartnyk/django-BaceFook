@@ -5,15 +5,14 @@ from django.dispatch import receiver
 from django.conf import settings
 import uuid
 from user_interface.models import Friends
+from django_extensions.db.fields import AutoSlugField
 
 MALES = (
     ('None', ''),
     ('Male', 'Male'),
     ('Female', 'Female'),
-    ('Other', 'Other'),
-    
+    ('Other', 'Other'),    
 )
-
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -23,6 +22,7 @@ class Profile(models.Model):
     about = models.TextField(blank=True, null=True)
     account_confirmed = models.BooleanField(default=False)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
+    slug = AutoSlugField(populate_from=['user__first_name', 'user__last_name', 'user__id'])
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name
@@ -31,4 +31,5 @@ class Profile(models.Model):
 def create_profile(sender, instance=None, created=False, **kwargs):
     if created: 
         Profile.objects.create(user=instance)
-        Friends.objects.create(user=instance, friends=instance)
+        obj = Friends.objects.create(user=instance)
+        obj.friends.add(instance)

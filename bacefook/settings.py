@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'messenger',
     'crispy_forms',
     'django_cleanup.apps.CleanupConfig',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 MEDIA_ROOT = join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

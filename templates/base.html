@@ -1,3 +1,5 @@
+{% load static %}
+
 <html>
 <head>
     <title>
@@ -7,8 +9,37 @@
     </title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
-<body style="width: 60%; margin: 0 auto">
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="{% url 'user_interface:timeline' %}">BaceFook</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    {% if user.is_authenticated %}
+      <ul class="navbar-nav mr-auto">
+        
+        <li class="nav-item">
+          <a href="{% url 'user_data:details' %}">Manage account</a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'user_interface:friends' %}">Friends</a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'user_data:logout' %}">log out</a>
+        </li>
+        
+      </ul>
+    {% endif %}
+      
+    {% block additional_nav_item %}
+    
+    {% endblock additional_nav_item %}
+  </div>
+</nav>
     {% block content %}
 
     {% endblock content %}

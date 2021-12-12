@@ -22,13 +22,12 @@ body {
 }
 
 .post {
+    font-size:1.3rem;
     margin-bottom: 2rem;
-    padding: 1rem;
-    background-color: rgb(65, 200, 253);
+    padding: 1rem 1rem .5rem 1rem;
+    background-color: rgba(85, 202, 248, 0.534);
     border-radius: 25px;
-    max-height: 500px;
 }
-
 
 .profile-buttons {
     clear: both; 
@@ -37,3 +36,36 @@ body {
     margin-top: 1rem;
 }
 
+.post-details{
+    font-size:2rem;
+    padding: 1.5rem;
+    background-color: rgba(65, 200, 253, 0.575);
+    border-radius: 25px;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.post-white-details {
+    background-color: white; 
+    padding: 1rem; 
+    font-size: 1.5rem;
+    border-radius: 1rem;
+    margin-top:1rem;
+}
+
+#comment-section {
+    float: left;
+    width: 78%;
+    margin-right: 2%;
+    display: inline;
+}
+
+.btn :active {
+    background-color: blue;
+}
+
+.post-img {
+    max-height: 400px;
+    margin: 0 auto;
+    display: block;
+}

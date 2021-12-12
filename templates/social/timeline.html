@@ -14,10 +14,11 @@ Timeline
 
 {% block content %}
       <div class="left-timeline col-5">
+            Share something with your friends:
             <form method="POST" enctype="multipart/form-data">
                   {% csrf_token %}
                   {{ form|crispy }}
-                  <input type="submit" value="Share">
+                  <input type="submit" value="Share" class='btn btn-outline-success' style='width:100%;'>
             </form>
       </div>
 
@@ -25,21 +26,27 @@ Timeline
             {% for posts in posts_obj %}
                   
                   {% for post in posts %}
-                  <div class="post" {% if post.owner == request.user %}style='background-color: rgb(125, 212, 247);'{% endif %}>
+                  <div class="post">
+                        <img src="{{ post.owner.profile.profile_picture.url }}" width=50 style='max-height:75px; border-radius: 20px; margin-right:1rem;'>
+                        {{ post.owner.get_full_name }}{% if post.owner == request.user %}⭐{% endif %}
+                        <span style="float: right; text-align: right;">{{ post.date|date:'H:i' }}
+                        
+                        <br>
+                              {{ post.date|date:'d/m/Y' }}</span>                      
+                        
+                                    
+                        <br>
+                        <p style='margin-top: 1.5rem;'>{{ post.body }}</p>
+                        {% if post.image.name != '' %}
+                        <p><img src="{{ post.image.url }}" class='post-img'><p>                    
+                        {% endif %}
+                        
+                  <p class='post-white-details'>
+                        <span style='text-align: left;'>{{ post.likes.count }} 👍</span>
+                        <span style='margin-left: 2rem;'>{{ post.comment.all.count }} 💬</span>
+                        <span style='float: right;'><a href="{% url 'user_interface:post-details' post.slug %}">See details</a></span>
+                  </p>
 
-                        {{ post.owner.first_name }} {{ post.owner.last_name }} 
-                        <span style="float: right;">{{ post.date|date:'H:i' }}</span>
-                    
-                        <p>
-                            <span style="float: right;">{{ post.date|date:'d/m/Y' }}</span>
-                        </p>  
-                               
-                    <br>
-                    <p>{{ post.body }}</p>
-                    {% if post.image.name != '' %}
-                    <p><img src="{{ post.image.url }}" style="max-width: 100%;"><p>                    
-                    {% endif %}
-                    
                   </div> 
                   {% endfor %}
                 

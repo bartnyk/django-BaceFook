@@ -12,6 +12,9 @@ from django.core.exceptions import ObjectDoesNotExist
 import os
 from user_interface.models import Post, Friends
 from user_interface.views import add_friend, remove_friend
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.conf import settings
 
 def login_view(request): 
     if request.user.is_authenticated:
@@ -28,7 +31,7 @@ def login_view(request):
         form = LoginForm()
     return render(request, "authentication/login.html", {"form": form})
 
-@login_required(login_url='user_data:login')
+@login_required
 def logout_view(request):
     logout(request)
     return render(request, 'authentication/logout.html')
@@ -54,12 +57,12 @@ def registration_view(request):
         form = RegisterForm()
     return render(request, 'authentication/registration.html', {"form": form})
 
-@login_required(login_url="user_data:login")
+@login_required
 def account_details(request, slug=None):
     friends_obj = Friends.objects.get(user=request.user)
     context = {}
     if slug is None:
-        if not Profile.objects.get(user=request.user).account_confirmed:
+        if not request.user.profile.account_confirmed:
             return render(request, 'authentication/registration_confirmation.html', {'mail': request.user.email, 'purpose': 'resend'})
         profile = Profile.objects.get(user=request.user)
         context['owner'] = True
@@ -81,10 +84,10 @@ def account_details(request, slug=None):
         return HttpResponseRedirect(request.path_info)
 
     context['profile'] = profile
-    context['posts'] = Post.objects.filter(owner=profile.user)
+    context['posts'] = Post.objects.filter(owner=profile.user).order_by('-date')
     return render(request, 'social/account.html', context)
 
-@login_required(login_url='user_data:login')
+@login_required
 def send_confirmation(request):
     user = request.user
     profile = Profile.objects.get(user=user)
@@ -95,7 +98,7 @@ def send_confirmation(request):
     subject = user.first_name + " " + user.last_name + f" | {data[0]}"
     to = user.email
     uuid = profile.uuid
-    body = data[1] + request.build_absolute_uri(f"/account/confirm/{uuid}")
+    body = data[1] + request.build_absolute_uri(f"/accounts/confirm/{uuid}")
     send_mail(
         subject=subject,
         message=body,
@@ -118,21 +121,23 @@ def check_confirmation(request, uuid):
         logout(request)
     return render(request, 'authentication/check_result.html', context)
     
-@login_required(login_url='user_data:login')
+@login_required
 def account_settings(request):
     user = request.user
     profile = Profile.objects.get(user=user)
     if request.method == "POST":
-        form = AdditionalInfoForm(request.POST)
+        form = AdditionalInfoForm(request.POST, request.FILES)
         if form.is_valid():
             cd = form.cleaned_data
+            print(cd)
             user.first_name = cd['first_name']
             user.last_name = cd['last_name']
             profile.date_of_birth = cd['date_of_birth']
             profile.male = cd['male']
             profile.about = cd['about']
-            if request.FILES.get("profile_pic") is not None:
-                profile.profile_picture = request.FILES.get("profile_pic")
+            img = request.FILES.get("image")
+            if img is not None:
+                profile.profile_picture = img
             user.save()
             profile.save()
             return redirect(reverse('user_data:details'))
@@ -146,9 +151,4 @@ def account_settings(request):
         })
     return render(request, 'social/settings.html', {"form": form})
 
-def change_password(request):
-    form = PasswordChange
-    if request.method == "POST":
-        if form.is_valid():
-            pass
-    return render(request, 'authentication/password_change.html', {'form': form})
+

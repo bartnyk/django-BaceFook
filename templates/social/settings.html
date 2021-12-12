@@ -10,8 +10,12 @@
     <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form|crispy }}
-    <input type="submit" value="Apply">
-        <a href="{% url 'user_data:change_password' %}">Change password</a>
+    {{ img_form|crispy }}
+    <input type="submit" value="Apply" class="btn btn-outline-success my-2 mr-4">
+    <input type="submit" value="Change password" class="btn btn-outline-success my-2 mr-4">
+    <input type="submit" value="Change e-mail address" class="btn btn-outline-success my-2 mr-4">
+    <input type="submit" value="Delete account" class="btn btn-outline-danger my-2 mr-4"> <!-- dodać name -->
+
     </form>
 
 {% endblock content %}  

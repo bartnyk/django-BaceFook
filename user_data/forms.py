@@ -2,8 +2,16 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
-from .models import MALES
+from django.core.files import images
+from django.forms.models import ModelFormMetaclass
+from .validators import validate_date_of_birth, validate_image
 
+_MALES = (
+    ('None', ''),
+    ('Male', 'Male'),
+    ('Female', 'Female'),
+    ('Other', 'Other'),    
+)
 
 class LoginForm(forms.Form):
     username_or_mail = forms.CharField(label='Login or e-mail', max_length=150)
@@ -12,7 +20,7 @@ class LoginForm(forms.Form):
     def clean_username_or_mail(self):
         login = self.cleaned_data['username_or_mail']
         if User.objects.filter(email=login).exists():
-            return User.objects.get(email=cd['username_or_mail'])
+            return User.objects.get(email=login)
         elif User.objects.filter(username=login).exists():
             return login
         else:    
@@ -22,7 +30,7 @@ class RegisterForm(forms.Form):
     username = forms.CharField(label='Login', max_length=150)
     first_name = forms.CharField(label='First name', max_length=20)
     last_name = forms.CharField(label='Last name', max_length=40)
-    male = forms.ChoiceField(label="Male", choices=MALES, required=False)
+    male = forms.ChoiceField(label="Male", choices=_MALES, required=False)
     email = forms.EmailField(label='E-mail address', max_length=150)
     password = forms.CharField(label='Password', widget=forms.PasswordInput, validators=[validate_password])
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
@@ -34,6 +42,9 @@ class RegisterForm(forms.Form):
         pwd = cd.get('password')
         pwd2 = cd.get('password2')
         
+        if "@" in username:
+            raise ValidationError("'@' is forbidden in username!")
+
         if User.objects.filter(username=username).exists(): #username existance
             raise ValidationError('Username already exists!')
 
@@ -51,10 +62,30 @@ class DateInput(forms.DateInput):
 class AdditionalInfoForm(forms.Form):
     first_name = forms.CharField(label='First name', max_length=20)
     last_name = forms.CharField(label='Last name', max_length=40)
-    male = forms.ChoiceField(label="Male", choices=MALES, required=False)
+    male = forms.ChoiceField(label="Male", choices=_MALES, required=False)
     date_of_birth = forms.DateTimeField(label="Date of birth", required=False, widget=DateInput)
     about = forms.CharField(label='Tell us about yourself', widget=forms.Textarea(), required=False)
-    profile_pic = forms.ImageField(label="Profile picture", required=False)
+    image = forms.ImageField(label="Profile picture", required=False)
+
+    def clean_image(self):
+        avaible_formats = [
+            'png',
+            'jpeg',
+            'jpg',
+            ]
+        img = self.files.get('image')
+        if img:
+            img_ext = img.name.split(".")[-1]
+            if img.size > 4194304:
+                raise ValidationError("Image size must be less than 4MB")
+            if img_ext not in avaible_formats:
+                raise ValidationError("Image extension is not avaible")        
+        return img
+
+    def clean_date_of_birth(self):
+        date = self.cleaned_data['date_of_birth']
+        if date:
+            return validate_date_of_birth(date)
 
 class ChangeUsernameOrMailForm(forms.Form):
     username = forms.CharField(label='Your new login', max_length=150, required=False)

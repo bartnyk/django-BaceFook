@@ -30,18 +30,28 @@
     </div>
     <div class="right-timeline col-7">
         {% for post in posts %}
-            <div class="post">
-                <div>
-                    {{ post.owner.first_name }} {{ post.owner.last_name }} 
-                    <span style="float: right;">{{ post.date|date:'H:m' }}</span>
-                
-                    <p>
-                        <span style="float: right;">{{ post.date|date:'d/m/Y' }}</span>
-                    </p>  
-                </div>            
-                <br>
-                <p>{{ post.body }}</p>
-            </div>
+                  <div class="post">
+                        <img src="{{ post.owner.profile.profile_picture.url }}" width=50 style='max-height:75px; border-radius: 20px; margin-right:1rem;'>
+                        {{ post.owner.get_full_name }}
+                        <span style="float: right; text-align: right;">{{ post.date|date:'H:i' }}
+                        
+                        <br>
+                              {{ post.date|date:'d/m/Y' }}</span>                      
+                        
+                                    
+                        <br>
+                        <p style='margin-top: 1.5rem;'>{{ post.body }}</p>
+                        {% if post.image.name != '' %}
+                        <p><img src="{{ post.image.url }}" class='post-img'><p>                    
+                        {% endif %}
+                        
+                  <p class='post-white-details'>
+                        <span style='text-align: left;'>{{ post.likes.count }} 👍</span>
+                        <span style='margin-left: 2rem;'>{{ post.comment.all.count }} 💬</span>
+                        <span style='float: right;'><a href="{% url 'user_interface:post-details' post.slug %}">See details</a></span>
+                  </p>
+
+                  </div> 
         {% endfor %}
     </div>
 {% endblock content %}

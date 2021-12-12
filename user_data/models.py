@@ -6,6 +6,7 @@ from django.conf import settings
 import uuid
 from user_interface.models import Friends
 from django_extensions.db.fields import AutoSlugField
+from .validators import validate_date_of_birth, validate_image
 
 MALES = (
     ('None', ''),
@@ -16,8 +17,8 @@ MALES = (
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    profile_picture = models.ImageField(upload_to='images/', default='images/default.png')
-    date_of_birth = models.DateField(blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='images/', default='images/default.png', validators=[validate_image])
+    date_of_birth = models.DateField(blank=True, null=True, validators=[validate_date_of_birth])
     male = models.CharField(max_length=30, choices=MALES, default='None')
     about = models.TextField(blank=True, null=True)
     account_confirmed = models.BooleanField(default=False)

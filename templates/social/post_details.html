@@ -1,0 +1,78 @@
+{% extends "../base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{{ post.owner.first_name }} post's
+{% endblock title %}
+
+{% block content %}
+
+<div class="post-details">
+
+    <img src="{{ post.owner.profile.profile_picture.url }}" width=50 style='max-height:75px; border-radius: 20px; margin-right:1rem;'>
+    {{ post.owner.get_full_name }} 
+            <span style="float: right; text-align: right;">{{ post.date|date:'H:i' }}
+                <br>
+            {{ post.date|date:'d/m/Y' }}</span>
+     
+    
+                
+    <br>
+    <p style='margin-top:2rem;'>{{ post.body }}</p>
+    {% if post.image.name != '' %}
+    <p><img src="{{ post.image.url }}" style="max-width: 100%;" class='post-img'><p>                    
+    {% endif %}
+    <p style='margin-top:2rem;'>
+        
+        <form method="POST" style='display: inline;'>
+            {% csrf_token %}
+            <input type='hidden' name='like' value="{% if request.user in post.likes.all %}dislike{% else %}like{% endif %}">
+            <input type='hidden' name='post_id' value="{{ post.id }}"/>
+            <input type='submit' value="{{ post.likes.count }} 👍" class="btn btn-outline-success {% if request.user in post.likes.all %} active {% endif %}" style='font-size:1.5rem;'>    
+        </form>        
+        <span style='margin-left:2rem;'>
+            {{ post.comment.all.count }} <a href="#comment-section">💬</a>
+        </span>
+        {% if post.owner == request.user %}
+            <span style="float: right;">
+                <a href="{% url 'user_interface:edit-post' post.slug %}" class="btn btn-outline-success" style='font-size: 1.3rem;'>Edit post</a>
+                <form method="POST" style='display: inline;' action="{% url 'user_interface:edit-post' post.slug %}">
+                    {% csrf_token %}
+                    <input type='submit' name='delete' value='Delete post' class="btn btn-outline-danger" style='font-size: 1.3rem;'>
+                </form>
+            </span>
+        {% else %}
+        {% endif %}
+
+    </p>
+<div class='post-white-details'>
+    
+    
+    {% for com in post.comment.all %}
+    <p>
+        <img src="{{ com.owner.profile.profile_picture.url }}" width=30 style='max-height:50px; border-radius: 15px; margin-right:1rem;'>
+        {{ com.owner.get_full_name }} 
+        <span style='font-size: 1rem; float:right; text-align: right;'> {{ com.date|date:'H:i' }} <br> {{ com.date|date:'d/m/y' }}</span>
+        <p>
+            {{com.comment}}
+        </p>        
+    </p>
+    <hr>
+
+{% empty %}
+<h2 style="text-align: center;">No comments yet.</h2>
+{% endfor %}
+
+<form method='POST'>
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type='hidden' name='post_id' value="{{ post.id }}"/>
+    <input type='submit' value="Comment"  class="btn btn-outline-success" style='width: 20%'/>
+</form>
+
+</div>
+
+
+</div> 
+
+{% endblock content %}

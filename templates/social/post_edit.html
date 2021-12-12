@@ -1,0 +1,16 @@
+{% extends "../base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Edit post
+{% endblock title %}
+
+{% block content %}
+
+<form method='POST' enctype="multipart/form-data" style='width: 60%; margin: 0 auto;'>
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type='submit' value="Edit" class='btn btn-outline-success' style='width: 100%'>
+</form>
+
+{% endblock content %}

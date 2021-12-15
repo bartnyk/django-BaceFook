@@ -1,0 +1,16 @@
+{% extends "../base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Make some changes
+{% endblock title %}
+
+{% block content %}
+
+<form method='POST'>
+{% csrf_token %}
+{{ form|crispy }}
+<input type='submit' value="Change" class='btn btn-outline-success'>
+</form>
+
+{% endblock content %}

@@ -5,6 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.files import images
 from django.forms.models import ModelFormMetaclass
 from .validators import validate_date_of_birth, validate_image
+from django.contrib.auth.hashers import check_password
 
 _MALES = (
     ('None', ''),
@@ -12,6 +13,13 @@ _MALES = (
     ('Female', 'Female'),
     ('Other', 'Other'),    
 )
+
+def password_check(p1, p2):    
+    if not check_password(p1, p2):
+        raise ValidationError("Incorrect password!")
+    else:        
+        return p1
+
 
 class LoginForm(forms.Form):
     username_or_mail = forms.CharField(label='Login or e-mail', max_length=150)
@@ -87,10 +95,51 @@ class AdditionalInfoForm(forms.Form):
         if date:
             return validate_date_of_birth(date)
 
-class ChangeUsernameOrMailForm(forms.Form):
-    username = forms.CharField(label='Your new login', max_length=150, required=False)
-    email = forms.EmailField(label='E-mail address', max_length=150, required=False)
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+class ChangeUsername(forms.ModelForm): 
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(ChangeUsername, self).__init__(*args, **kwargs)
+
+    def clean_password(self):
+        pwd = self.cleaned_data['password']
+        return password_check(pwd, self.user.password)
+
+class TypePassword(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    class Meta:
+        model = User
+        fields =['password']
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(TypePassword, self).__init__(*args, **kwargs)
+
+    def clean_password(self):
+        pwd = self.cleaned_data['password']
+        print(pwd)
+        return password_check(pwd, self.user.password)
+
+class ChangeEmail(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    class Meta:
+        model = User
+        fields = ['email', 'password']
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(ChangeEmail, self).__init__(*args, **kwargs)
+    
+    def clean_password(self):
+        pwd = self.cleaned_data['password']
+        return password_check(pwd, self.user.password)
 
 class PasswordResetForm(forms.Form):
     email = forms.EmailField(label='E-mail address', max_length=150, required=False)

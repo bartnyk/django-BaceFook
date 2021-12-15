@@ -1,0 +1,15 @@
+{% extends "../base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Delete account
+{% endblock title %}
+
+{% block content %}
+To confirm account deletion type your password below.
+<form method='POST'>
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type='submit' value='Delete account' class='btn btn-outline-danger'>
+</form>
+{% endblock content %}

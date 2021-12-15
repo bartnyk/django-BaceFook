@@ -7,25 +7,32 @@
 {% block content %}
 
     <div class="left-timeline col-5">
-        <img src='{{ profile.profile_picture.url }}' width="150" style="float: left; margin-right:50px">
-
-        <p>{{ profile.user.first_name}} {{ profile.user.last_name }}</p>
-        <p>Date of birth: {{ profile.date_of_birth }}</p>
-        <p>About: {{ profile.about }}</p>
-        <form method="POST">
-            {% csrf_token %}
-            {% if owner %}
-            <input type='submit' class='btn btn-outline-success profile-buttons' name='btn' value="Change details">
-            {% else %}
-            {% if is_friend %}
-            <input type='submit' class='btn btn-outline-success profile-buttons' name='btn' value="Delete friend">
-            <input type='submit' class='btn btn-outline-success profile-buttons' name='btn' value="Message">
-            {% else %}
-            <input type='submit' class='btn btn-outline-success profile-buttons' name='btn' value="Add friend">
-            {% endif %}
-            
-        {% endif %}
-        </form>
+        <div class='row'>
+            <div class='col-6 mx-auto'>
+                <img src='{{ profile.profile_picture.url }}' class='col-12' style="">
+                <form method="POST">
+                    {% csrf_token %}
+                    {% if owner %}
+                    <input type='submit' class='btn btn-outline-success profile-buttons mx-auto' name='btn' value="Account settings">
+                    {% else %}
+                    {% if is_friend %}
+                    <input type='submit' class='btn btn-outline-success profile-buttons' name='btn' value="Delete friend">
+                    <input type='submit' class='btn btn-outline-success profile-buttons' name='btn' value="Message">
+                    {% else %}
+                    <input type='submit' class='btn btn-outline-success profile-buttons' name='btn' value="Add friend">
+                    {% endif %}
+                    
+                {% endif %}
+                </form>
+            </div>
+            <div class='col-6' style='display: inline; float: right;'>
+                <p>{{ profile.user.first_name}} {{ profile.user.last_name }}</p>
+                <p>Username: {{ profile.user }}</p>
+                <p>Email: {{ profile.user.email }}</p>
+                <p>Date of birth: {{ profile.date_of_birth }}</p>
+                <p>About: {{ profile.about }}</p>
+            </div>
+        </div>
         
     </div>
     <div class="right-timeline col-7">
@@ -42,7 +49,7 @@
                         <br>
                         <p style='margin-top: 1.5rem;'>{{ post.body }}</p>
                         {% if post.image.name != '' %}
-                        <p><img src="{{ post.image.url }}" class='post-img'><p>                    
+                        <p><img src="{{ post.image.url }}" class='post-img col-12'><p>                    
                         {% endif %}
                         
                   <p class='post-white-details'>

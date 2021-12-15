@@ -79,7 +79,7 @@ def account_details(request, slug=None):
             add_friend(profile.user, request.user)
         elif btn == "Delete friend":
             remove_friend(profile.user, request.user)
-        elif btn == "Change details": return redirect(reverse('user_data:account_settings'))
+        elif btn == "Account settings": return redirect(reverse('user_data:account_settings'))
         elif btn == "Message": pass # Not ready yet
         return HttpResponseRedirect(request.path_info)
 
@@ -127,7 +127,7 @@ def account_settings(request):
     profile = Profile.objects.get(user=user)
     if request.method == "POST":
         form = AdditionalInfoForm(request.POST, request.FILES)
-        if form.is_valid():
+        if form.is_valid() and request.POST.get('confirm'):
             cd = form.cleaned_data
             print(cd)
             user.first_name = cd['first_name']
@@ -141,6 +141,12 @@ def account_settings(request):
             user.save()
             profile.save()
             return redirect(reverse('user_data:details'))
+        else:
+            action = request.POST.get('btn')
+            if action == 'Change password': return redirect(reverse('user_data:password_change'))
+            elif action == 'Change e-mail address': return redirect(reverse('user_data:change_email'))
+            elif action == 'Change username': return redirect(reverse('user_data:change_username'))
+            elif action == 'Delete account': return redirect(reverse('user_data:delete_account'))
     else:
         form = AdditionalInfoForm(initial={
             "first_name": user.first_name,
@@ -151,4 +157,37 @@ def account_settings(request):
         })
     return render(request, 'social/settings.html', {"form": form})
 
+@login_required
+def change_email_or_username(request):
+    action = request.path.split("/")[-2]
+    u = request.user
+    if request.method == "POST":
+        if action == 'email':
+            form = ChangeEmail(request.user, request.POST)
+        elif action == 'username':
+            form = ChangeUsername(request.user, request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            if cd.get('username'): u.username = cd.get('username')
+            elif cd.get('email'): u.email = cd.get('email')
+            u.save()
+            return redirect(reverse('user_data:details'))
+    else:        
+        if action == 'email':
+            form = ChangeEmail(request.user)
+        elif action == 'username':
+            form = ChangeUsername(request.user)
+    return render(request, 'authentication/change.html', {'form': form})
 
+def delete_account(request):
+    usr = request.user
+    if request.method == "POST":
+        form = TypePassword(request.user, request.POST)
+        print(form.errors)
+        if form.is_valid(): 
+            usr.delete()
+            return redirect(reverse("user_data:login"))
+    else:
+        form = TypePassword(request.user)
+    return render(request, 'authentication/delete_account.html', {"form": form})
+            
